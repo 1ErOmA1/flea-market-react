@@ -1,0 +1,24 @@
+name: Daily Auto-Commit
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Каждый день в 00:00 UTC (3:00 МСК)
+  workflow_dispatch:      # Позволяет запустить вручную
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update log file
+        run: |
+          echo "Коммит: $(date '+%d.%m.%Y %H:%M')" >> daily-log.txt
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@users.noreply.github.com"
+
+      - name: Commit and push
+        run: |
+          git add .
+          git commit -m "Commit: $(date '+%d.%m.%Y')"
+          git push
