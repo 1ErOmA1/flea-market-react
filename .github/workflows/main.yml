@@ -2,30 +2,35 @@ name: Daily Auto-Commit
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Каждый день в 00:00 UTC (3:00 МСК)
-  workflow_dispatch:      # Позволяет запустить вручную
+    - cron: '0 0 * * *'
+  workflow_dispatch:
 
 permissions:
-  contents: write  # Критически важное разрешение!
+  contents: write  # Обязательно!
 
 jobs:
-  build:
+  auto-commit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
-          token: ${{ secrets.AUTO_COMMIT_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}  # Используем встроенный токен
           persist-credentials: true
-          fetch-depth: 0  # Полная история коммитов
+          fetch-depth: 0
 
-      - name: Update log file
+      - name: Update file
         run: |
-          echo "Коммит: $(date '+%d.%m.%Y %H:%M')" >> daily-log.txt
-          git config --global user.name "GitHub Actions Bot"
-          git config --global user.email "actions@users.noreply.github.com"
+          echo "Автокоммит: $(date '+%d.%m.%Y %H:%M:%S')" >> log.txt
 
       - name: Commit and push
         run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
           git add .
-          git diff-index --quiet HEAD || git commit -m "Commit: $(date '+%d.%m.%Y')"
-          git push origin HEAD:main
+          if git diff-index --quiet HEAD --; then
+            echo "Нет изменений - пропускаем коммит"
+          else
+            git commit -m "Auto-commit: $(date '+%d.%m.%Y %H:%M')"
+            git push origin HEAD:main
+          fi
