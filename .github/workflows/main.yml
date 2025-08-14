@@ -2,11 +2,14 @@ name: Daily Auto-Commit at 1AM
 
 on:
   schedule:
-    - cron: '0 1 * * *'  # Каждый день в 01:00 по UTC (1:00 ночи)
+    - cron: '0 1 * * *' 
   workflow_dispatch:
 
 permissions:
   contents: write
+  pull-requests: write
+  issues: write
+  statuses: write
 
 jobs:
   auto-commit:
