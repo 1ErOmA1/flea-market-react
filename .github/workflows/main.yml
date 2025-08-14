@@ -2,7 +2,7 @@ name: Daily Auto-Commit at 1AM
 
 on:
   schedule:
-    - cron: '0 1 * * *' 
+    - cron: '0 2 * * *' 
   workflow_dispatch:
 
 permissions:
@@ -31,6 +31,6 @@ jobs:
         run: |
           git config --global user.name "1ErOmA1"
           git config --global user.email "cbtddbdhvethgd@gmail.com"
-          git add .
-          git commit --allow-empty -m "Automatic commit at 1AM [$(date '+%d.%m.%Y')]"
+          git add last_update.txt
+          git commit --allow-empty -m "Automatic commit at 1AM MSK [$(date '+%d.%m.%Y')]"
           git push origin HEAD:main
